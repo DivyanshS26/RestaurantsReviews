@@ -2,6 +2,7 @@ import app from "./server.js";
 import dotenv from "dotenv";
 import mongodb from "mongodb"
 import RestaurantsDOA from "./doa/restaurantsDOA.js";
+import ReviewsDOA from "./doa/reviewsDOA.js"
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ MongoClient.connect(
   })
   .then(async client => {
     await RestaurantsDOA.injectDB(client)
+    await ReviewsDOA.injectDB(client)
     app.listen(port, () => {
       console.log(`listening on port ${port}`)
     })

@@ -1,3 +1,5 @@
+import mongodb from "mongodb"
+const ObjectId = mongodb.ObjectID
 let restaurants
 
 export default class RestaurantsDOA {
@@ -52,6 +54,60 @@ export default class RestaurantsDOA {
         `Unable to convert cursor to array or problem counting documents, ${e}`
       );
       return { restaurantsList: [], totalNumRestaurants: 0 };
+    }
+  }
+  static async getRestaurantsById(id){
+    try{
+      const pipeline = [ {
+        $match : {
+          _id: ObjectId(id)
+        },
+      },
+      {
+        $lookup : {
+          from: "reviews",
+          let: {
+            id: "$_id",
+          },
+          pipeline: [
+            {
+              $match : {
+                $expr : {
+                  $eq: ["$restaurant_id", "$$id"],
+                },
+              },
+            },
+            {
+              $sort: {
+                date: -1,
+              }
+            }
+          ],
+          as: "reviews",
+        },
+      },
+      {
+        $addFields: {
+          reviews: "$reviews",
+        },
+      },
+    ]
+    return await restaurants.aggregate(pipeline).next()
+    }
+    catch(e){
+      console.error(`RestaurantsById fault: ${e}`)
+      throw e
+    }
+  }
+  static async getRestaurantsCuisines(){
+    let cuisines = []
+    try{
+      cuisines = await restaurants.distinct("cuisine")
+      return cuisines
+    }
+    catch(e){
+      console.error(`RestaurantCuisine fault: ${e}`);
+      return cuisines
     }
   }
 }

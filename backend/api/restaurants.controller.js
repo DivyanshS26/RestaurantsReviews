@@ -30,8 +30,31 @@ export default class RestaurantController {
       filters: filters,
       enteries: restaurantsPerPage,
       total: totalNumRestaurants,
-    }
+    };
 
     res.json(response);
+  }
+  static async apiGetRestaurantsById(req, res, next) {
+    try {
+      let id = req.params.id;
+      let restaurant = await RestaurantsDOA.getRestaurantsById(id);
+      if (!restaurant) {
+        res.status(400).json({ error: "restaurant not found" });
+        return;
+      }
+      res.json(restaurant);
+    } catch (e) {
+      console.log(`api, ${e}`);
+      res.status(500).json({ error: e });
+    }
+  }
+  static async apiGetRestaurantsCuisines(req, res, next) {
+    try {
+      let cuisines = await RestaurantsDOA.getRestaurantsCuisines();
+      res.json(cuisines);
+    } catch (e) {
+      console.log(`api, ${e}`);
+      res.status(500).json({ error: e });
+    }
   }
 }
