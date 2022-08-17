@@ -15,7 +15,7 @@ export default class ReviewsDAO {
     }
   }
 
-  static async addReview(restaurantId, review, user, date) {
+  static async addReview(restaurantId, user, review, date) {
     try {
       const reviewDoc = {
         name: user.name,
@@ -24,6 +24,7 @@ export default class ReviewsDAO {
         text: review,
         restaurant_id: ObjectId(restaurantId),
       };
+      console.log(reviewDoc);
       return await reviews.insertOne(reviewDoc);
     } catch (e) {
       console.error(`Unable to post review: ${e}`);

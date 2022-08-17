@@ -13,8 +13,8 @@ export default class ReviewsController {
 
       const ReviewResponse = await ReviewsDOA.addReview(
         restaurantId,
-        review,
         UserInfo,
+        review,
         date
       );
       res.json({ status: "success" });
